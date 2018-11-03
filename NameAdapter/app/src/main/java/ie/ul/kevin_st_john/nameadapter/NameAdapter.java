@@ -15,10 +15,27 @@ public class NameAdapter extends RecyclerView.Adapter<NameAdapter.NameViewHolder
 
     private List<String> mNames = new ArrayList<>();
     private Random mRandom = new Random();
+    private RecyclerView mRecyclerView;
+
+    @Override
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        mRecyclerView=recyclerView;
+    }
 
     public void addName(){
         mNames.add(0, getRandomName());
-        notifyDataSetChanged();
+        //notifyDataSetChanged();
+        notifyItemInserted(0);
+        notifyItemRangeChanged(0, mNames.size());
+        mRecyclerView.scrollToPosition(0);
+    }
+
+    public void removeName(int index){
+        mNames.remove(index);
+        notifyItemRemoved(index);
+        notifyItemRangeChanged(0, mNames.size());
+
     }
 
     private String getRandomName() {
@@ -59,6 +76,14 @@ public class NameAdapter extends RecyclerView.Adapter<NameAdapter.NameViewHolder
             super(itemView);
             mNameTextView = itemView.findViewById(R.id.name);
             mDescriptionTextView=itemView.findViewById(R.id.description);
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+
+                    removeName(getAdapterPosition());
+                    return true;
+                }
+            });
         }
 
 
